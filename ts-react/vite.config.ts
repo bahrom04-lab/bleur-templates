@@ -5,6 +5,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [
     react({
+      // @ts-expect-error babel option type mismatch with @vitejs/plugin-react v6
       babel: {
         plugins: [["babel-plugin-react-compiler"]],
       },

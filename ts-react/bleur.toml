@@ -64,3 +64,23 @@ value = "@description@"
 placeholder = "#author#"
 source = "package.json"
 value = "@author@"
+
+[[change]]
+placeholder = "#name#"
+source = "default.nix"
+value = "@name@"
+
+[[change]]
+placeholder = "#version#"
+source = "default.nix"
+value = "@version@"
+
+[[change]]
+placeholder = "#website#"
+source = "default.nix"
+value = "@website@"
+
+[[change]]
+placeholder = "#description#"
+source = "default.nix"
+value = "@description@"

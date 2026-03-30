@@ -26,26 +26,6 @@ by [Bleur Stack] developers.
 - Gitlab CI to produce flatpak nightlies
 - i18n support
 
-## How to init a project ?
-
-> Remove python bootstrap in favor of cli bleur tool.
-
-The template ships a simple python script to init a project easily. It asks you a few questions and replaces & renames all the necessary files.
-
-If you clone this repository, you can run it with:
-
-```shell
-➜ python create-project.py
-Welcome to GTK Rust Template
-Name: Contrast
-Project Name: contrast
-Application ID (e.g. org.domain.MyAwesomeApp, see: https://developer.gnome.org/ChooseApplicationID/): org.gnome.design.Contrast
-Author: Bleur Developers
-Email: support@bleur.net
-```
-
-A new directory named `contrast` containing the generated project
-
 ## Building the project
 
 There are basically 2 ways of building this project.
@@ -67,7 +47,7 @@ nix build
 Make sure you have `flatpak` and `flatpak-builder` installed. Then run the commands below. Replace `<application_id>` with the value you entered during project creation. Please note that these commands are just for demonstration purposes. Normally this would be handled by your IDE, such as GNOME Builder or VS Code with the Flatpak extension.
 
 ```shell
-flatpak install --user org.gnome.Sdk//46 org.gnome.Platform//46  org.freedesktop.Sdk.Extension.rust-stable//23.08 org.freedesktop.Sdk.Extension.llvm16//23.08
+flatpak install --user org.gnome.Sdk//49 org.gnome.Platform//49  org.freedesktop.Sdk.Extension.rust-stable//25.08 org.freedesktop.Sdk.Extension.llvm21//25.08
 flatpak-builder --user flatpak_app build-aux/<application_id>.Devel.json
 ```
 

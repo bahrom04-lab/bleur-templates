@@ -34,8 +34,4 @@
       # Output package
       packages.default = pkgs.callPackage ./. {inherit pkgs crane;};
     });
-    # // {
-    #   # NixOS module (deployment)
-    #   nixosModules.bot = import ./module.nix self;
-    # };
 }

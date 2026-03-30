@@ -4,6 +4,25 @@ name = "rust-relm4"
 ## Variables
 
 [[variable]]
+variable = "project-name"
+default = "my-awesome-app"
+message = "Project name (e.g my-awesome-app)"
+pattern = "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+pattern_error = "Project name must be kebab-case (e.g. my-awesome-app)."
+
+[[variable]]
+variable = "application-id"
+default = "uz.bleur.MyAwesomeApp"
+message = "Application ID (e.g. uz.bleur.MyAwesomeApp)"
+pattern = "^(?:[A-Za-z][A-Za-z0-9_]*\\.)+[A-Za-z][A-Za-z0-9_-]*$"
+pattern_error = "Application ID must look like org.example.MyApp (hyphens only in the last segment)."
+
+[[variable]]
+variable = "application-name"
+default = "My Awesome App"
+message = "Application name (e.g. My Awesome App)"
+
+[[variable]]
 variable = "website"
 default = "https://bleur.uz"
 message = "Is there any website hosted for this project?"
@@ -26,8 +45,68 @@ message = "Who's going to be author?"
 # File changes
 
 [[change]]
+placeholder = "#project-name#"
+source = "Cargo.toml"
+value = "@project-name@"
+
+[[change]]
+placeholder = "#project-name#"
+source = "Cargo.lock"
+value = "@project-name@"
+
+[[change]]
+placeholder = "#project-name#"
+source = "meson.build"
+value = "@project-name@"
+
+[[change]]
+placeholder = "#project-name#"
+source = "data/#application-id#.desktop.in.in"
+value = "@project-name@"
+
+[[change]]
+placeholder = "#project-name#"
+source = "build-aux/#application-id#.Devel.json"
+value = "@project-name@"
+
+[[change]]
+placeholder = "#application-name#"
+source = "data/#application-id#.desktop.in.in"
+value = "@application-name@"
+
+[[change]]
+placeholder = "#application-name#"
+source = "data/#application-id#.metainfo.xml.in.in"
+value = "@application-name@"
+
+[[change]]
+placeholder = "#application-name#"
+source = "src/main.rs"
+value = "@application-name@"
+
+[[change]]
+placeholder = "#application-name#"
+source = "src/app.rs"
+value = "@application-name@"
+
+[[change]]
+placeholder = "#application-name#"
+source = "src/modals/about.rs"
+value = "@application-name@"
+
+[[change]]
 placeholder = "#website#"
 source = "Cargo.toml"
+value = "@website@"
+
+[[change]]
+placeholder = "#website#"
+source = "data/#application-id#.metainfo.xml.in.in"
+value = "@website@"
+
+[[change]]
+placeholder = "#website#"
+source = "src/modals/about.rs"
 value = "@website@"
 
 [[change]]
@@ -41,6 +120,89 @@ source = "Cargo.toml"
 value = "@repository@"
 
 [[change]]
+placeholder = "#repository#"
+source = "data/#application-id#.metainfo.xml.in.in"
+value = "@repository@"
+
+[[change]]
+placeholder = "#repository#"
+source = "src/modals/about.rs"
+value = "@repository@"
+
+[[change]]
 placeholder = "#description#"
 source = "Cargo.toml"
 value = "@description@"
+
+[[change]]
+placeholder = "#application-id#"
+source = "meson.build"
+value = "@application-id@"
+
+[[change]]
+placeholder = "#application-id#"
+source = "build-aux/#application-id#.Devel.json"
+value = "@application-id@"
+
+[[change]]
+placeholder = "#application-id#"
+source = "po/POTFILES.in"
+value = "@application-id@"
+
+[[change]]
+placeholder = "#application-path#"
+source = "data/resources/resources.gresource.xml"
+value = "/@application-id@/"
+apply = "replaceAll:.->/"
+
+[[change]]
+placeholder = "#application-path#"
+source = "data/#application-id#.gschema.xml.in"
+value = "/@application-id@/"
+apply = "replaceAll:.->/"
+
+[[change]]
+placeholder = "#application-path#"
+source = "src/main.rs"
+value = "/@application-id@/"
+apply = "replaceAll:.->/"
+
+[[change]]
+placeholder = "#application-path#"
+source = "src/app.rs"
+value = "/@application-id@/"
+apply = "replaceAll:.->/"
+
+[[change]]
+placeholder = "#project-name-alt#"
+source = "build-aux/#application-id#.Devel.json"
+value = "@project-name@"
+apply = "replaceAll:-->_"
+
+[[replace]]
+from = "build-aux/#application-id#.Devel.json"
+to = "build-aux/@application-id@.Devel.json"
+
+[[replace]]
+from = "data/icons/#application-id#-symbolic.svg"
+to = "data/icons/@application-id@-symbolic.svg"
+
+[[replace]]
+from = "data/icons/#application-id#.svg"
+to = "data/icons/@application-id@.svg"
+
+[[replace]]
+from = "data/icons/#application-id#.Devel.svg"
+to = "data/icons/@application-id@.Devel.svg"
+
+[[replace]]
+from = "data/#application-id#.desktop.in.in"
+to = "data/@application-id@.desktop.in.in"
+
+[[replace]]
+from = "data/#application-id#.gschema.xml.in"
+to = "data/@application-id@.gschema.xml.in"
+
+[[replace]]
+from = "data/#application-id#.metainfo.xml.in.in"
+to = "data/@application-id@.metainfo.xml.in.in"

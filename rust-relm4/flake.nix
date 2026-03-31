@@ -6,7 +6,7 @@
     # nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
 
     # Fresh and new for testing
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     crane.url = "github:ipetkov/crane";
 
@@ -34,8 +34,4 @@
       # Output package
       packages.default = pkgs.callPackage ./. {inherit pkgs crane;};
     });
-    # // {
-    #   # NixOS module (deployment)
-    #   nixosModules.bot = import ./module.nix self;
-    # };
 }

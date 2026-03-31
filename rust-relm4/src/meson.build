@@ -1,15 +1,15 @@
-global_conf = configuration_data()
-global_conf.set_quoted('APP_ID', application_id)
-global_conf.set_quoted('PKGDATADIR', pkgdatadir)
-global_conf.set_quoted('PROFILE', profile)
-global_conf.set_quoted('VERSION', version + version_suffix)
-global_conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
-global_conf.set_quoted('LOCALEDIR', localedir)
-config = configure_file(
-  input: 'config.rs.in',
-  output: 'config.rs',
-  configuration: global_conf
-)
+conf_data = configuration_data()
+
+conf_data.set_quoted('APP_ID', application_id)
+conf_data.set_quoted('GETTEXT_PACKAGE', gettext_package)
+conf_data.set_quoted('LOCALEDIR', localedir)
+conf_data.set_quoted('PKGDATADIR', pkgdatadir)
+conf_data.set_quoted('PROFILE', profile)
+conf_data.set_quoted('VERSION', version + version_suffix)
+conf_data.set_quoted('RESOURCES_FILE', pkgdatadir / 'resources.gresource')
+
+configure_file(input: 'config.rs.in', output: 'config.rs', configuration: conf_data)
+
 # Copy the config.rs output to the source directory.
 run_command(
   'cp',
@@ -18,22 +18,10 @@ run_command(
   check: true
 )
 
-cargo_options = [ '--manifest-path', meson.project_source_root() / 'Cargo.toml' ]
-# cargo_options += [ '--target-dir', meson.project_build_root() / 'src' ]
-cargo_options += [ '--locked' ]
+cargo_build_options = [ '--manifest-path', meson.project_source_root() / 'Cargo.toml' ]
+cargo_build_options += cargo_release_option
 
-if get_option('profile') == 'default'
-  cargo_options += [ '--release' ]
-  rust_target = 'release'
-  message('Building in release mode')
-else
-  rust_target = 'debug'
-  message('Building in debug mode')
-endif
-
-cargo_env = [ 'CARGO_HOME=' + meson.project_build_root() / 'cargo-home' ]
-
-cargo_build = custom_target(
+custom_target(
   'cargo-build',
   build_by_default: true,
   build_always_stale: true,
@@ -42,20 +30,11 @@ cargo_build = custom_target(
   install: true,
   install_dir: bindir,
   depends: resources,
+  env: cargo_env,
   command: [
-  # 'env',
-      # cargo_env,
-      cargo, 'build',
-      ['--release', '--manifest-path', meson.project_source_root() / 'Cargo.toml'],
-      # cargo_options,
-      # '&&',
-      # 'ls', '-lah',
-      # '&&',
-      # 'env',
-      # '&&',
-      # 'exit',  '1',
-      '&&',
-      # 'cp', 'target' / rust_target / meson.project_name(), '@OUTPUT@',
-      'cp', '/build/source/target/' / rust_target / meson.project_name(), '@OUTPUT@',
+    cargo, 'build',
+    cargo_build_options,
+    '&&',
+    'cp', cargo_target / rust_target / meson.project_name(), '@OUTPUT@',
   ]
 )

@@ -1,15 +1,15 @@
-#[rustfmt::skip]
-mod config;
 mod app;
+mod config;
 mod modals;
 
 use config::{APP_ID, GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
-use gettextrs::{gettext, LocaleCategory};
+use gettextrs::{LocaleCategory, gettext};
 use gtk::prelude::ApplicationExt;
 use gtk::{gio, glib};
 use relm4::{
+    RelmApp,
     actions::{AccelsPlus, RelmAction, RelmActionGroup},
-    gtk, main_application, RelmApp,
+    gtk, main_application,
 };
 
 use app::App;
@@ -31,7 +31,7 @@ fn main() {
     gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
     gettextrs::textdomain(GETTEXT_PACKAGE).expect("Unable to switch to the text domain");
 
-    glib::set_application_name(&gettext("GTK Rust Template"));
+    glib::set_application_name(&gettext("#application-name#"));
 
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
@@ -39,7 +39,7 @@ fn main() {
     gtk::Window::set_default_icon_name(APP_ID);
 
     let app = main_application();
-    app.set_resource_base_path(Some("/net/bleur/GtkRustTemplate/"));
+    app.set_resource_base_path(Some("#application-path#"));
 
     let mut actions = RelmActionGroup::<AppActionGroup>::new();
 
@@ -58,7 +58,7 @@ fn main() {
 
     let data = res
         .lookup_data(
-            "/net/bleur/GtkRustTemplate/style.css",
+            "#application-path#style.css",
             gio::ResourceLookupFlags::NONE,
         )
         .unwrap();

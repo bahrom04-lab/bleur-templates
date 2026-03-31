@@ -1,6 +1,7 @@
 use relm4::{
+    Component, ComponentParts, ComponentSender, SimpleComponent,
     actions::{RelmAction, RelmActionGroup},
-    adw, gtk, main_application, Component, ComponentParts, ComponentSender, SimpleComponent,
+    adw, gtk, main_application,
 };
 
 use gtk::prelude::{
@@ -35,7 +36,7 @@ impl SimpleComponent for App {
             section! {
                 "_Preferences" => PreferencesAction,
                 "_Keyboard" => ShortcutsAction,
-                "_About GTK Rust Template" => AboutAction,
+                "_About #application-name#" => AboutAction,
             }
         }
     }
@@ -51,7 +52,7 @@ impl SimpleComponent for App {
 
             #[wrap(Some)]
             set_help_overlay: shortcuts = &gtk::Builder::from_resource(
-                    "/net/bleur/GtkRustTemplate/gtk/help-overlay.ui"
+                    "#application-path#gtk/help-overlay.ui"
                 )
                 .object::<gtk::ShortcutsWindow>("help_overlay")
                 .unwrap() -> gtk::ShortcutsWindow {

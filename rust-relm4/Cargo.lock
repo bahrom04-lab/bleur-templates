@@ -443,17 +443,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gtk-rust-template"
-version = "0.1.0"
-dependencies = [
- "gettext-rs",
- "relm4",
- "relm4-components",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "gtk4"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -827,6 +816,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "#project-name#"
+version = "0.1.0"
+dependencies = [
+ "gettext-rs",
+ "relm4",
+ "relm4-components",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 use adw::prelude::AdwDialogExt;
 use gtk::prelude::GtkApplicationExt;
-use relm4::{adw, gtk, ComponentParts, ComponentSender, SimpleComponent};
+use relm4::{ComponentParts, ComponentSender, SimpleComponent, adw, gtk};
 
 use crate::config::{APP_ID, VERSION};
 
@@ -16,19 +16,17 @@ impl SimpleComponent for AboutDialog {
     fn init_root() -> Self::Root {
         adw::AboutDialog::builder()
             .application_icon(APP_ID)
-            // Insert your license of choice here
+            // FIXME: Insert your license of choice here
             // .license_type(gtk::License::MitX11)
-            // Insert your website here
-            // .website("https://gitlab.gnome.org/bilelmoussaoui/gtk-rust-template/")
-            // Insert your Issues page
-            // .issue_url("https://gitlab.gnome.org/World/Rust/gtk-rust-template/-/issues")
-            // Insert your application name here
-            .application_name("Relm4 Template")
+            .website("#website#")
+            .issue_url("#repository#/issues")
+            // FIXME: Insert your application name here
+            .application_name("#application-name#")
             .version(VERSION)
             .translator_credits("translator-credits")
-            .copyright("© 2025 Bleur Developers")
-            .developers(vec!["Bleur Developers"])
-            .designers(vec!["Bleur Developers"])
+            .copyright("© 2026 #author#")
+            .developers(vec!["#author#"])
+            .designers(vec!["#author#"])
             .build()
     }
 

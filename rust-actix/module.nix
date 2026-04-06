@@ -1,10 +1,18 @@
-flake: {
+flake:
+{
   config,
   lib,
   pkgs,
   ...
-}: let
-  inherit (lib) mkEnableOption mkOption mkIf mkMerge types;
+}:
+let
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    mkIf
+    mkMerge
+    types
+    ;
 
   # Manifest via Cargo.toml
   manifest = (pkgs.lib.importTOML ./Cargo.toml).workspace.package;
@@ -16,12 +24,10 @@ flake: {
   fpkg = flake.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
   # Toml management
-  toml = pkgs.formats.toml {};
+  toml = pkgs.formats.toml { };
 
   # Find out whether shall we manage database locally
-  local-database = (
-    (cfg.database.host == "127.0.0.1") || (cfg.database.host == "localhost")
-  );
+  local-database = ((cfg.database.host == "127.0.0.1") || (cfg.database.host == "localhost"));
 
   # The digesting configuration of server
   toml-config = toml.generate "config.toml" {
@@ -33,27 +39,33 @@ flake: {
 
   # Caddy proxy reversing
   caddy = mkIf (cfg.enable && cfg.proxy-reverse.enable && cfg.proxy == "caddy") {
-    services.caddy.virtualHosts = lib.debug.traceIf (builtins.isNull cfg.proxy-reverse.domain) "domain can't be null, please specicy it properly!" {
-      "${cfg.proxy-reverse.domain}" = {
-        extraConfig = ''
-          reverse_proxy 127.0.0.1:${toString cfg.port}
-        '';
-      };
-    };
+    services.caddy.virtualHosts =
+      lib.debug.traceIf (builtins.isNull cfg.proxy-reverse.domain)
+        "domain can't be null, please specicy it properly!"
+        {
+          "${cfg.proxy-reverse.domain}" = {
+            extraConfig = ''
+              reverse_proxy 127.0.0.1:${toString cfg.port}
+            '';
+          };
+        };
   };
 
   # Nginx proxy reversing
   nginx = mkIf (cfg.enable && cfg.proxy-reverse.enable && cfg.proxy == "nginx") {
-    services.nginx.virtualHosts = lib.debug.traceIf (builtins.isNull cfg.proxy-reverse.domain) "domain can't be null, please specicy it properly!" {
-      "${cfg.proxy-reverse.domain}" = {
-        addSSL = true;
-        enableACME = true;
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:${toString cfg.port}";
-          proxyWebsockets = true;
+    services.nginx.virtualHosts =
+      lib.debug.traceIf (builtins.isNull cfg.proxy-reverse.domain)
+        "domain can't be null, please specicy it properly!"
+        {
+          "${cfg.proxy-reverse.domain}" = {
+            addSSL = true;
+            enableACME = true;
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:${toString cfg.port}";
+              proxyWebsockets = true;
+            };
+          };
         };
-      };
-    };
   };
 
   # Systemd services
@@ -71,14 +83,14 @@ flake: {
 
     ## Group to join our user
     users.groups = mkIf (cfg.group == manifest.name) {
-      ${manifest.name} = {};
+      ${manifest.name} = { };
     };
 
     ## Postgresql service (turn on if it's not already on)
     services.postgresql = lib.optionalAttrs local-database {
       enable = lib.mkDefault true;
 
-      ensureDatabases = [cfg.database.name];
+      ensureDatabases = [ cfg.database.name ];
       ensureUsers = [
         {
           name = cfg.database.user;
@@ -89,8 +101,8 @@ flake: {
 
     # Configurator service (before actual server)
     systemd.services."${manifest.name}-config" = {
-      wantedBy = ["${manifest.name}.target"];
-      partOf = ["${manifest.name}.target"];
+      wantedBy = [ "${manifest.name}.target" ];
+      partOf = [ "${manifest.name}.target" ];
       path = with pkgs; [
         jq
         openssl
@@ -106,15 +118,17 @@ flake: {
         WorkingDirectory = "${cfg.dataDir}";
         RemainAfterExit = true;
 
-        ExecStartPre = let
-          preStartFullPrivileges = ''
-            set -o errexit -o pipefail -o nounset
-            shopt -s dotglob nullglob inherit_errexit
+        ExecStartPre =
+          let
+            preStartFullPrivileges = ''
+              set -o errexit -o pipefail -o nounset
+              shopt -s dotglob nullglob inherit_errexit
 
-            chown -R --no-dereference '${cfg.user}':'${cfg.group}' '${cfg.dataDir}'
-            chmod -R u+rwX,g+rX,o-rwx '${cfg.dataDir}'
-          '';
-        in "+${pkgs.writeShellScript "${manifest.name}-pre-start-full-privileges" preStartFullPrivileges}";
+              chown -R --no-dereference '${cfg.user}':'${cfg.group}' '${cfg.dataDir}'
+              chmod -R u+rwX,g+rX,o-rwx '${cfg.dataDir}'
+            '';
+          in
+          "+${pkgs.writeShellScript "${manifest.name}-pre-start-full-privileges" preStartFullPrivileges}";
 
         ExecStart = pkgs.writeShellScript "${manifest.name}-config" ''
           set -o errexit -o pipefail -o nounset
@@ -142,9 +156,9 @@ flake: {
 
     # Configurator service (before actual server)
     systemd.services."${manifest.name}-migration" = {
-      after = ["${manifest.name}-config.service"] ++ lib.optional local-database "postgresql.service";
-      wantedBy = ["${manifest.name}.target"];
-      partOf = ["${manifest.name}.target"];
+      after = [ "${manifest.name}-config.service" ] ++ lib.optional local-database "postgresql.service";
+      wantedBy = [ "${manifest.name}.target" ];
+      partOf = [ "${manifest.name}.target" ];
       path = with pkgs; [
         diesel-cli
         diesel-cli-ext
@@ -159,21 +173,23 @@ flake: {
         WorkingDirectory = "${cfg.dataDir}";
         RemainAfterExit = true;
 
-        ExecStartPre = let
-          preStartFullPrivileges = ''
-            set -o errexit -o pipefail -o nounset
-            shopt -s dotglob nullglob inherit_errexit
+        ExecStartPre =
+          let
+            preStartFullPrivileges = ''
+              set -o errexit -o pipefail -o nounset
+              shopt -s dotglob nullglob inherit_errexit
 
-            chown -R --no-dereference '${cfg.user}':'${cfg.group}' '${cfg.dataDir}'
-            chmod -R u+rwX,g+rX,o-rwx '${cfg.dataDir}'
+              chown -R --no-dereference '${cfg.user}':'${cfg.group}' '${cfg.dataDir}'
+              chmod -R u+rwX,g+rX,o-rwx '${cfg.dataDir}'
 
-            # In the future maybe, for faster perms
-            # find '${cfg.dataDir}' \! -user '${cfg.user}' -exec chown '${cfg.user}':'${cfg.group}' {} +
-            # find '${cfg.dataDir}' \! -perm /u+rw,g+r,o-rwx -exec chmod u+rwX,g+rX,o-rwx {} +
+              # In the future maybe, for faster perms
+              # find '${cfg.dataDir}' \! -user '${cfg.user}' -exec chown '${cfg.user}':'${cfg.group}' {} +
+              # find '${cfg.dataDir}' \! -perm /u+rw,g+r,o-rwx -exec chmod u+rwX,g+rX,o-rwx {} +
 
-            rm -rf '${cfg.dataDir}/migrations'
-          '';
-        in "+${pkgs.writeShellScript "${manifest.name}-pre-start-full-privileges" preStartFullPrivileges}";
+              rm -rf '${cfg.dataDir}/migrations'
+            '';
+          in
+          "+${pkgs.writeShellScript "${manifest.name}-pre-start-full-privileges" preStartFullPrivileges}";
 
         ExecStart = pkgs.writeShellScript "${manifest.name}-migration" ''
           set -o errexit -o pipefail -o nounset
@@ -229,13 +245,18 @@ flake: {
     ## Main server service
     systemd.services."${manifest.name}" = {
       description = "${manifest.name} Rust Actix server";
-      documentation = [manifest.homepage];
+      documentation = [ manifest.homepage ];
 
-      after = ["network.target" "${manifest.name}-config.service" "${manifest.name}-migration.service"] ++ lib.optional local-database "postgresql.service";
+      after = [
+        "network.target"
+        "${manifest.name}-config.service"
+        "${manifest.name}-migration.service"
+      ]
+      ++ lib.optional local-database "postgresql.service";
       requires = lib.optional local-database "postgresql.service";
-      wants = ["network-online.target"];
-      wantedBy = ["multi-user.target"];
-      path = [cfg.package];
+      wants = [ "network-online.target" ];
+      wantedBy = [ "multi-user.target" ];
+      path = [ cfg.package ];
 
       serviceConfig = {
         User = cfg.user;
@@ -246,13 +267,16 @@ flake: {
         StateDirectory = cfg.user;
         StateDirectoryMode = "0750";
         # Access write directories
-        ReadWritePaths = [cfg.dataDir "/run/postgresql"];
+        ReadWritePaths = [
+          cfg.dataDir
+          "/run/postgresql"
+        ];
         CapabilityBoundingSet = [
           "AF_NETLINK"
           "AF_INET"
           "AF_INET6"
         ];
-        DeviceAllow = ["/dev/stdin r"];
+        DeviceAllow = [ "/dev/stdin r" ];
         DevicePolicy = "strict";
         IPAddressAllow = "localhost";
         LockPersonality = true;
@@ -268,7 +292,7 @@ flake: {
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
         ProtectSystem = "strict";
-        ReadOnlyPaths = ["/"];
+        ReadOnlyPaths = [ "/" ];
         RemoveIPC = true;
         RestrictAddressFamilies = [
           "AF_NETLINK"
@@ -294,27 +318,25 @@ flake: {
   # Various checks and tests of options
   asserts = lib.mkIf cfg.enable {
     ## Warning (nixos-rebuild doesn't fail if any warning shows up)
-    warnings = [];
+    warnings = [ ];
     # ++ lib.optional
     # (cfg.proxy-reverse.enable && (cfg.proxy-reverse.domain == null || cfg.proxy-reverse.domain == ""))
     # "services.${manifest.name}.proxy-reverse.domain must be set in order to properly generate certificate!";
 
     ## Tests (nixos-rebuilds fails if any test fails)
-    assertions =
-      [
-        {
-          assertion = (!cfg.database.socketAuth) -> cfg.database.passwordFile != null;
-          message = "services.${manifest.name}.database.passwordFile must be set when using remote database!";
-        }
-      ]
-      ++ lib.optional
-      (cfg.proxy-reverse.enable)
+    assertions = [
       {
-        assertion = cfg.proxy-reverse.domain != null && cfg.proxy-reverse.domain != "";
-        message = "You must specify a valid domain when proxy-reverse is enabled!";
-      };
+        assertion = (!cfg.database.socketAuth) -> cfg.database.passwordFile != null;
+        message = "services.${manifest.name}.database.passwordFile must be set when using remote database!";
+      }
+    ]
+    ++ lib.optional (cfg.proxy-reverse.enable) {
+      assertion = cfg.proxy-reverse.domain != null && cfg.proxy-reverse.domain != "";
+      message = "You must specify a valid domain when proxy-reverse is enabled!";
+    };
   };
-in {
+in
+{
   # Available user options
   options = with lib; {
     services.${manifest.name} = {
@@ -353,7 +375,8 @@ in {
         };
 
         proxy = mkOption {
-          type = with types;
+          type =
+            with types;
             nullOr (enum [
               "nginx"
               "caddy"
@@ -372,19 +395,13 @@ in {
 
         socketAuth = mkOption {
           type = types.bool;
-          default =
-            if local-database
-            then true
-            else false;
+          default = if local-database then true else false;
           description = "Use Unix socket authentication for PostgreSQL instead of password authentication when local database wanted.";
         };
 
         socket = mkOption {
           type = types.nullOr types.path;
-          default =
-            if local-database
-            then "/run/postgresql"
-            else null;
+          default = if local-database then "/run/postgresql" else null;
           description = "Path to the PostgreSQL Unix socket.";
         };
 
@@ -448,5 +465,10 @@ in {
     };
   };
 
-  config = mkMerge [asserts service caddy nginx];
+  config = mkMerge [
+    asserts
+    service
+    caddy
+    nginx
+  ];
 }

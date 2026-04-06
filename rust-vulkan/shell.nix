@@ -1,5 +1,3 @@
-# Either have nixpkgs and fenix in your channels
-# Or build it using flakes, flake way is more recommended!
 flake:
 { pkgs, ... }:
 let
@@ -14,10 +12,13 @@ pkgs.mkShell {
 
   packages = with pkgs; [
     nixd
+    nixfmt
     statix
     deadnix
-    alejandra
 
+    rustfmt
+    clippy
+    rust-analyzer
     cargo-watch
 
     # Other packages here
@@ -26,8 +27,8 @@ pkgs.mkShell {
     # ...
   ];
 
-  # Set Environment Variables
-  RUST_BACKTRACE = "full";
+  # RUST_BACKTRACE = "full";
+  # RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
 
   shellHook = ''
     # Extra steps to do while activating development shell

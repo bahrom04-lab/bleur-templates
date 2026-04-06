@@ -1,31 +1,33 @@
 # Either have nixpkgs and fenix in your channels
 # Or build it using flakes, flake way is more recommended!
-flake: {pkgs, ...}: let
+flake:
+{ pkgs, ... }:
+let
   # Hostplatform system
   system = pkgs.hostPlatform.system;
 
   # Production package
   base = flake.packages.${system}.default;
 in
-  pkgs.mkShell {
-    inputsFrom = [base];
+pkgs.mkShell {
+  inputsFrom = [ base ];
 
-    packages = with pkgs; [
-      nixd
-      statix
-      deadnix
-      alejandra
+  packages = with pkgs; [
+    nixd
+    statix
+    deadnix
+    alejandra
 
-      cargo-watch
+    cargo-watch
 
-      just
-      just-lsp
-    ];
+    just
+    just-lsp
+  ];
 
-    # Set Environment Variables
-    RUST_BACKTRACE = "full";
+  # Set Environment Variables
+  RUST_BACKTRACE = "full";
 
-    shellHook = ''
-      # Extra steps
-    '';
-  }
+  shellHook = ''
+    # Extra steps
+  '';
+}

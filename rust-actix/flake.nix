@@ -12,32 +12,38 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    flake-parts,
-    ...
-  } @ inputs:
-    flake-parts.lib.mkFlake {inherit inputs;} (top @ {...}: {
-      flake = {
-        # NixOS module (deployment)
-        nixosModules.server = import ./module.nix self;
-      };
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
-      perSystem = {pkgs, ...}: {
-        # Nix script formatter
-        formatter = pkgs.alejandra;
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-parts,
+      ...
+    }@inputs:
+    flake-parts.lib.mkFlake { inherit inputs; } (
+      top@{ ... }:
+      {
+        flake = {
+          # NixOS module (deployment)
+          nixosModules.server = import ./module.nix self;
+        };
+        systems = [
+          "x86_64-linux"
+          "aarch64-linux"
+          "x86_64-darwin"
+          "aarch64-darwin"
+        ];
+        perSystem =
+          { pkgs, ... }:
+          {
+            # Nix script formatter
+            formatter = pkgs.alejandra;
 
-        # Development environment
-        devShells.default = import ./shell.nix {inherit pkgs;};
+            # Development environment
+            devShells.default = import ./shell.nix { inherit pkgs; };
 
-        # Output package
-        packages.default = pkgs.callPackage ./. {inherit pkgs;};
-      };
-    });
+            # Output package
+            packages.default = pkgs.callPackage ./. { inherit pkgs; };
+          };
+      }
+    );
 }

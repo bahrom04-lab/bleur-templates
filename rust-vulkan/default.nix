@@ -44,7 +44,19 @@ pkgs.rustPlatform.buildRustPackage {
   nativeBuildInputs = with pkgs; [
     # Other compile time dependencies
     # here
-    # pkg-config
+    pkg-config
+    vulkan-headers
+    vulkan-loader
+    vulkan-validation-layers
+    vulkan-tools
+    vulkan-utility-libraries
+    vulkan-volk
+    vulkan-validation-layers
+    spirv-headers
+    spirv-tools
+    spirv-cross
+    mesa
+    glslang
     # openssl
   ];
 
@@ -53,6 +65,8 @@ pkgs.rustPlatform.buildRustPackage {
   buildInputs = with pkgs; [
     # openssl
     # libressl
+    vulkan-headers
+    vulkan-tools
   ];
 
   # Set Environment Variables

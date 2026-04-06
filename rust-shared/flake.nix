@@ -18,39 +18,45 @@
     };
   };
 
-  outputs = {
-    self,
-    flake-parts,
-    fenix,
-    ...
-  } @ inputs:
-    flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
-      perSystem = {
-        pkgs,
-        system,
-        ...
-      }: {
-        # Overlay for pkgs
-        _module.args.pkgs = import self.inputs.nixpkgs {
-          inherit system;
-          overlays = [fenix.overlays.default];
-          config.allowUnfree = true;
-        };
+  outputs =
+    {
+      self,
+      flake-parts,
+      fenix,
+      ...
+    }@inputs:
+    flake-parts.lib.mkFlake { inherit inputs; } (
+      { ... }:
+      {
+        systems = [
+          "x86_64-linux"
+          "aarch64-linux"
+          "x86_64-darwin"
+          "aarch64-darwin"
+        ];
+        perSystem =
+          {
+            pkgs,
+            system,
+            ...
+          }:
+          {
+            # Overlay for pkgs
+            _module.args.pkgs = import self.inputs.nixpkgs {
+              inherit system;
+              overlays = [ fenix.overlays.default ];
+              config.allowUnfree = true;
+            };
 
-        # Nix script formatter
-        formatter = pkgs.alejandra;
+            # Nix script formatter
+            formatter = pkgs.alejandra;
 
-        # Development environment
-        devShells.default = import ./shell.nix self {inherit pkgs;};
+            # Development environment
+            devShells.default = import ./shell.nix self { inherit pkgs; };
 
-        # Output package
-        packages.default = pkgs.callPackage ./. {inherit pkgs;};
-      };
-    });
+            # Output package
+            packages.default = pkgs.callPackage ./. { inherit pkgs; };
+          };
+      }
+    );
 }

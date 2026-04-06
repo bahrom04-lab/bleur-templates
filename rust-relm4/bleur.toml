@@ -7,15 +7,15 @@ name = "rust-relm4"
 variable = "project-name"
 default = "my-awesome-app"
 message = "Project name (e.g my-awesome-app)"
-# pattern = "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-# pattern_error = "Project name must be kebab-case (e.g. my-awesome-app)."
+pattern = "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+pattern_error = "Project name must be kebab-case (e.g. my-awesome-app)."
 
 [[variable]]
 variable = "application-id"
 default = "uz.bleur.MyAwesomeApp"
 message = "Application ID (e.g. uz.bleur.MyAwesomeApp)"
-# pattern = "^(?:[A-Za-z][A-Za-z0-9_]*\\.)+[A-Za-z][A-Za-z0-9_-]*$"
-# pattern_error = "Application ID must look like org.example.MyApp (hyphens only in the last segment)."
+pattern = "^(?:[A-Za-z][A-Za-z0-9_]*\\.)+[A-Za-z][A-Za-z0-9_-]*$"
+pattern_error = "Application ID must look like org.example.MyApp (hyphens only in the last segment)."
 
 [[variable]]
 variable = "application-name"

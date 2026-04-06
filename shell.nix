@@ -17,8 +17,8 @@ pkgs.mkShell {
     # Nix
     nixd
     statix
+    nixfmt
     deadnix
-    alejandra
 
     # TOML
     taplo

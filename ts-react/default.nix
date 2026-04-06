@@ -1,57 +1,59 @@
 {
-  pkgs ? let
-    lock = (builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked;
-    nixpkgs = fetchTarball {
-      url = "https://github.com/nixos/nixpkgs/archive/${lock.rev}.tar.gz";
-      sha256 = lock.narHash;
-    };
-  in
-    import nixpkgs {overlays = [];},
+  pkgs ?
+    let
+      lock = (builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked;
+      nixpkgs = fetchTarball {
+        url = "https://github.com/nixos/nixpkgs/archive/${lock.rev}.tar.gz";
+        sha256 = lock.narHash;
+      };
+    in
+    import nixpkgs { overlays = [ ]; },
   ...
-}: let
+}:
+let
   # For extension
   inherit (pkgs) lib;
 in
-  pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
-    pname = "#name#";
-    version = "#version#";
+pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
+  pname = "#name#";
+  version = "#version#";
 
-    src = lib.cleanSource ./.;
+  src = lib.cleanSource ./.;
 
-    nativeBuildInputs = with pkgs; [
-      nodejs_22
-      pnpm
-      pnpmConfigHook
-    ];
+  nativeBuildInputs = with pkgs; [
+    nodejs_22
+    pnpm
+    pnpmConfigHook
+  ];
 
-    pnpmDeps = pkgs.fetchPnpmDeps {
-      inherit (finalAttrs) pname version src;
-      fetcherVersion = 3;
-      hash = "sha256-c4uOyJ4/Pxg4EV1vxZkxBfVRj08ph7gDFwcSjjQO9lU=";
-    };
+  pnpmDeps = pkgs.fetchPnpmDeps {
+    inherit (finalAttrs) pname version src;
+    fetcherVersion = 3;
+    hash = "sha256-c4uOyJ4/Pxg4EV1vxZkxBfVRj08ph7gDFwcSjjQO9lU=";
+  };
 
-    env.CI = "true";
+  env.CI = "true";
 
-    # Build
-    buildPhase = ''
-      runHook preBuild
-      pnpm build
-      runHook postBuild
-    '';
+  # Build
+  buildPhase = ''
+    runHook preBuild
+    pnpm build
+    runHook postBuild
+  '';
 
-    # Install
-    installPhase = ''
-      runHook preInstall
-      mkdir -p $out
-      cp -r dist/* $out/
-      runHook postInstall
-    '';
+  # Install
+  installPhase = ''
+    runHook preInstall
+    mkdir -p $out
+    cp -r dist/* $out/
+    runHook postInstall
+  '';
 
-    meta = with lib; {
-      homepage = "#website#";
-      description = "#description#";
-      license = with licenses; [mit];
-      platforms = with platforms; linux ++ darwin;
-      maintainers = with maintainers; [orzklv];
-    };
-  })
+  meta = with lib; {
+    homepage = "#website#";
+    description = "#description#";
+    license = with licenses; [ mit ];
+    platforms = with platforms; linux ++ darwin;
+    maintainers = with maintainers; [ orzklv ];
+  };
+})

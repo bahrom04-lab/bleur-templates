@@ -30,10 +30,11 @@
             "*.svg"
           ];
         };
-      in {
-        packages.default = import ./default.nix {inherit pkgs;};
+      in
+      {
+        packages.default = import ./default.nix { inherit pkgs; };
 
-        devShells.default = import ./shell.nix {inherit pkgs;};
+        devShells.default = import ./shell.nix { inherit pkgs; };
 
         formatter = treefmtEval.config.build.wrapper;
 

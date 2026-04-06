@@ -10,16 +10,8 @@
     import nixpkgs { overlays = [ ]; },
   crane,
   ...
-<<<<<<< HEAD
-}: let
-=======
 }:
 let
-  # Helpful nix function
-  lib = pkgs.lib;
-  getLibFolder = pkg: "${pkg}/lib";
-
->>>>>>> e68d213 (chore: rust-vulkan template)
   # Manifest via Cargo.toml
   manifest = (pkgs.lib.importTOML ./Cargo.toml).package;
 
@@ -56,18 +48,10 @@ let
     buildInputs = commonBuildInputs;
   };
 in
-<<<<<<< HEAD
-  craneLib.buildPackage {
-    pname = manifest.name;
-    version = manifest.version;
-    strictDeps = true;
-=======
 craneLib.buildPackage {
-  # pkgs.stdenv.mkDerivation {
   pname = manifest.name;
   version = manifest.version;
   strictDeps = true;
->>>>>>> e68d213 (chore: rust-vulkan template)
 
   src = pkgs.lib.cleanSource ./.;
   # src = craneLib.cleanCargoSource ./.;
@@ -81,21 +65,14 @@ craneLib.buildPackage {
   nativeBuildInputs = commonNativeBuildInputs;
   buildInputs = commonBuildInputs;
 
-<<<<<<< HEAD
-    preConfigure = ''
-      mesonFlagsArray+=("-Dcargo_home=$CARGO_HOME")
-    '';
+  preConfigure = ''
+    mesonFlagsArray+=("-Dcargo_home=$CARGO_HOME")
+  '';
 
-    configurePhase = ''
-      mesonConfigurePhase
-      runHook postConfigure
-    '';
-=======
   configurePhase = ''
     mesonConfigurePhase
     runHook postConfigure
   '';
->>>>>>> e68d213 (chore: rust-vulkan template)
 
   buildPhase = ''
     runHook preBuild
@@ -112,16 +89,8 @@ craneLib.buildPackage {
     runHook postInstall
   '';
 
-<<<<<<< HEAD
-    # buildPhaseCargoCommand = "cargo build --release";
-    # installPhaseCommand = "";
-    doNotPostBuildInstallCargoBinaries = true;
-    checkPhase = false;
-  }
-=======
   # buildPhaseCargoCommand = "cargo build --release";
   # installPhaseCommand = "";
   doNotPostBuildInstallCargoBinaries = true;
   checkPhase = false;
 }
->>>>>>> e68d213 (chore: rust-vulkan template)

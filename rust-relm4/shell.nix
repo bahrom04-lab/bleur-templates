@@ -32,11 +32,9 @@ pkgs.stdenv.mkDerivation {
     clippy
     rust-analyzer
     cargo-watch
-
-    # Other compile time dependencies
     openssl
-    # libressl
-
+    just
+    just-lsp
     # Gnome related
     gtk4
     meson
@@ -57,9 +55,6 @@ pkgs.stdenv.mkDerivation {
     desktop-file-utils
     gobject-introspection
     rustPlatform.bindgenHook
-
-    # Bootstrap
-    python3
   ];
 
   # Set Environment Variables

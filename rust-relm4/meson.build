@@ -1,10 +1,9 @@
 # TODO: after releasing meson 1.11 migrate into rust workspace. See for more info: https://mesonbuild.com/Rust.html#cargo-interaction
-
 project(
   '#project-name#',
   'rust',
   version: '0.1.0',
-  meson_version: '>= 1',
+  meson_version: '>= 1.10.1',
   # FIXME Set the project license
   # license: 'MIT',
 )
@@ -28,7 +27,6 @@ version = meson.project_version()
 
 prefix = get_option('prefix')
 bindir = prefix / get_option('bindir')
-localedir = prefix / get_option('localedir')
 
 datadir = prefix / get_option('datadir')
 pkgdatadir = datadir / meson.project_name()
@@ -37,8 +35,6 @@ podir = meson.project_source_root() / 'po'
 gettext_package = meson.project_name()
 
 if get_option('profile') == 'development'
-  message('Building in debug mode')
-
   profile = 'Devel'
   vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD', check: false).stdout().strip()
   if vcs_tag == ''
@@ -47,39 +43,16 @@ if get_option('profile') == 'development'
     version_suffix = '-@0@'.format(vcs_tag)
   endif
   application_id = '@0@.@1@'.format(base_id, profile)
-
-  cargo_release_option = []
-  rust_target = 'debug'
 else
-  message('Building in release mode')
-
   profile = ''
   version_suffix = ''
   application_id = base_id
-
-  cargo_release_option = [ '--release' ]
-  rust_target = 'release'
 endif
 
-cargo_home = get_option('cargo_home')
-
-if cargo_home == ''
-  cargo_home = meson.project_build_root() / 'cargo-home'
-endif
-
-cargo_target = meson.project_build_root() / 'cargo-target'
-
-cargo_env = environment()
-cargo_env.set('CARGO_HOME', cargo_home)
-cargo_env.set('CARGO_TARGET_DIR', cargo_target)
-meson.add_devenv(cargo_env)
-
-# Required if you run dist though
-find_program('cargo-vendor-filterer', required: false)
 meson.add_dist_script(
   'build-aux/dist-vendor.sh',
-  cargo_home,
-  cargo_target,
+  meson.project_build_root() / 'meson-dist' / meson.project_name() + '-' + version,
+  meson.project_source_root()
 )
 
 if get_option('profile') == 'development'

@@ -30,16 +30,27 @@ by [Bleur Stack] developers.
 
 There are basically 2 ways of building this project.
 
-### Nix
-
-All you need is nix package manager and the rest is already done for you:
-
+## Nix Build & run
+This application has Linux-only dependencies.
 ```bash
-# Build in nix environment
-nix build
+# download dependencies
+nix develop 
 
-# Executable binary is available at:
-./result/bin/app-name
+just install
+
+cd ..
+./project-name/builddir/install/bin/project-name
+
+# or with nix when ready for release
+nix build . --show-trace
+./project-name/result/bin/project-name
+
+# app run
+just run
+
+# Optional. Generate translation words from /po/POTFILES.in if needed.
+cd ./po
+xgettext --directory=.. --files-from=POTFILES.in --from-code=UTF-8 -kgettext -o translations.pot
 ```
 
 ### Flatpak
@@ -49,26 +60,6 @@ Make sure you have `flatpak` and `flatpak-builder` installed. Then run the comma
 ```shell
 flatpak install --user org.gnome.Sdk//49 org.gnome.Platform//49  org.freedesktop.Sdk.Extension.rust-stable//25.08 org.freedesktop.Sdk.Extension.llvm21//25.08
 flatpak-builder --user flatpak_app build-aux/<application_id>.Devel.json
-```
-
-## Running the project
-
-The same goes for running the project.
-
-### Nix
-
-If you've ran the nix build command, you already have pre-compiled binary available to run at:
-
-```bash
-# Executable binary is available at:
-./result/bin/app-name
-```
-
-Also, you can directly run `nix run` without having to run build command first which will instantly open the application for you:
-
-```bash
-# Nix will automatically open executable
-nix run
 ```
 
 ### Flatpak

@@ -18,6 +18,11 @@ pattern = "^(?:[A-Za-z][A-Za-z0-9_]*\\.)+[A-Za-z][A-Za-z0-9_-]*$"
 pattern_error = "Application ID must look like org.example.MyApp (hyphens only in the last segment)."
 
 [[variable]]
+variable = "application-path"
+default = "/uz/bleur/MyAwesomeApp/"
+message = "Application path (e.g. /uz/bleur/MyAwesomeApp/)"
+
+[[variable]]
 variable = "application-name"
 default = "My Awesome App"
 message = "Application name (e.g. My Awesome App)"
@@ -62,6 +67,11 @@ value = "@project-name@"
 [[change]]
 placeholder = "#project-name#"
 source = "data/#application-id#.desktop.in.in"
+value = "@project-name@"
+
+[[change]]
+placeholder = "#project-name#"
+source = "justfile"
 value = "@project-name@"
 
 [[change]]
@@ -152,25 +162,25 @@ value = "@application-id@"
 [[change]]
 placeholder = "#application-path#"
 source = "data/resources/resources.gresource.xml"
-value = "/@application-id@/"
+value = "/@application-path@/"
 apply = "replaceAll:.->/"
 
 [[change]]
 placeholder = "#application-path#"
 source = "data/#application-id#.gschema.xml.in"
-value = "/@application-id@/"
+value = "/@application-path@/"
 apply = "replaceAll:.->/"
 
 [[change]]
 placeholder = "#application-path#"
 source = "src/main.rs"
-value = "/@application-id@/"
+value = "/@application-path@/"
 apply = "replaceAll:.->/"
 
 [[change]]
 placeholder = "#application-path#"
 source = "src/app.rs"
-value = "/@application-id@/"
+value = "/@application-path@/"
 apply = "replaceAll:.->/"
 
 [[change]]
